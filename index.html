@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Repaso Escolar - Menú Principal</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .grid {
+      display: grid;
+      gap: 15px;
+    }
+    .card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #0f172a;
+      font-weight: 600;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Asignaturas y Actividades</h1>
+
+  <div class="grid">
+    <!-- Botón para Science -->
+    <a href="./science/" class="card">
+      <span>🧪 Science</span>
+      <span>→</span>
+    </a>
+
+    <!-- Botón para Matemáticas -->
+    <a href="./mates/" class="card">
+      <span>🔢 Matemáticas</span>
+      <span>→</span>
+    </a>
+
+    <!-- Botón para Lengua -->
+    <a href="./lengua/" class="card">
+      <span>📚 Lengua</span>
+      <span>→</span>
+    </a>
+  </div>
+
+</body>
+</html>
