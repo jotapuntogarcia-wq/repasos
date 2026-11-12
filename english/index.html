@@ -1,0 +1,308 @@
+<a href="../" style="display:inline-block; margin-bottom:15px; text-decoration:none; color:#2563eb;">← Volver al menú principal</a>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 2: Technology - Infinite Quiz</title>
+    <style>
+        /* Cyber/Tech Theme */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .quiz-container {
+            background-color: #1e293b;
+            border: 2px solid #0ea5e9;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+        }
+        h1 {
+            color: #38bdf8;
+            font-size: 2.2em;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        p.subtitle {
+            font-size: 1.1em;
+            color: #94a3b8;
+            margin-bottom: 25px;
+        }
+        .score-board {
+            font-size: 1.4em;
+            color: #10b981;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: #064e3b;
+            padding: 10px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .question-box {
+            font-size: 1.4em;
+            margin-bottom: 30px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        button.option-btn {
+            background-color: #334155;
+            color: #f8fafc;
+            border: 2px solid #38bdf8;
+            padding: 18px;
+            font-size: 1.2em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        button.option-btn:hover {
+            background-color: #0ea5e9;
+            color: white;
+        }
+        button.option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        .feedback {
+            margin-top: 25px;
+            font-size: 1.5em;
+            font-weight: bold;
+            min-height: 40px;
+        }
+        .next-btn {
+            margin-top: 20px;
+            background-color: #0ea5e9;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            cursor: pointer;
+            display: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .next-btn:hover {
+            background-color: #0284c7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <h1>💻 Tech Quiz 📱</h1>
+        <p class="subtitle">Unit 2: Technology in our lives</p>
+        
+        <div class="score-board">Score: <span id="score">0</span></div>
+        
+        <div id="question-text" class="question-box">Loading data...</div>
+        
+        <div id="options-container" class="options">
+            <!-- Options injected by JS -->
+        </div>
+        
+        <div id="feedback-text" class="feedback"></div>
+        <button id="next-btn" class="next-btn" onclick="generateQuestion()">Next Question 🚀</button>
+    </div>
+
+    <script>
+        // Vocabulary Arrays
+        const names = ["Ting", "Bobby", "Miss Baker", "Tom", "My dad"];
+        const devices = ["laptop", "smartphone", "e-reader", "tablet"];
+        const accessories = ["earphones", "digital camera", "printer", "speaker"];
+        const internetTerms = ["password", "app", "website"];
+        
+        // Comparative Adverbs
+        const compAdverbs = [
+            { word: "faster", wrong: ["fast", "more fast"] },
+            { word: "better", wrong: ["good", "more good"] },
+            { word: "more easily", wrong: ["easier", "easy"] },
+            { word: "more quickly", wrong: ["quicklier", "quick"] },
+            { word: "more carefully", wrong: ["careful", "carefuller"] }
+        ];
+
+        let currentCorrectAnswer = "";
+        let score = 0;
+
+        function getRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // Fisher-Yates shuffle
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function generateQuestion() {
+            document.getElementById('feedback-text').innerText = "";
+            document.getElementById('next-btn').style.display = "none";
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = "";
+
+            // Question generators available
+            const questionTypes = [
+                generateCould,
+                generateHadTo,
+                generateComparativeAdverb,
+                generateVocabulary
+            ];
+
+            const selectedType = getRandom(questionTypes);
+            const qData = selectedType();
+
+            document.getElementById('question-text').innerText = qData.question;
+            currentCorrectAnswer = qData.correct;
+
+            const shuffledOptions = shuffle([...qData.options]);
+
+            shuffledOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // 1. Grammar: could / couldn't
+        function generateCould() {
+            const device = getRandom(devices);
+            const isNegative = Math.random() > 0.5;
+            
+            if (isNegative) {
+                return {
+                    question: `In the past, children didn't have computers, so they ________ do their homework on a ${device}.`,
+                    correct: "couldn't",
+                    options: ["couldn't", "could", "had to"]
+                };
+            } else {
+                return {
+                    question: `My grandad is very clever. When he was five, he ________ write perfectly!`,
+                    correct: "could",
+                    options: ["could", "couldn't", "didn't have to"]
+                };
+            }
+        }
+
+        // 2. Grammar: had to / didn't have to
+        function generateHadTo() {
+            const name = getRandom(names);
+            const isNegative = Math.random() > 0.5;
+
+            if (isNegative) {
+                return {
+                    question: `It was Sunday yesterday, so ${name} ________ go to school.`,
+                    correct: "didn't have to",
+                    options: ["didn't have to", "had to", "couldn't"]
+                };
+            } else {
+                return {
+                    question: `The printer was broken, so ${name} ________ write the homework with a pen.`,
+                    correct: "had to",
+                    options: ["had to", "didn't have to", "could"]
+                };
+            }
+        }
+
+        // 3. Grammar: Comparative Adverbs
+        function generateComparativeAdverb() {
+            const adv = getRandom(compAdverbs);
+            const device1 = getRandom(devices);
+            const device2 = getRandom(devices);
+            
+            return {
+                question: `My new ${device1} works ________ than my old ${device2}.`,
+                correct: adv.word,
+                options: [adv.word, adv.wrong[0], adv.wrong[1]]
+            };
+        }
+
+        // 4. Vocabulary (Definitions)
+        function generateVocabulary() {
+            const type = Math.random();
+            if (type < 0.33) {
+                const term = getRandom(internetTerms);
+                let clue = "";
+                if (term === "password") clue = "a secret word to open a device";
+                if (term === "app") clue = "a program you download on a smartphone";
+                if (term === "website") clue = "a place on the internet you visit for information";
+                
+                return {
+                    question: `What is this?\nIt is ${clue}.`,
+                    correct: term,
+                    options: internetTerms
+                };
+            } else if (type < 0.66) {
+                const acc = getRandom(accessories);
+                let clue = "";
+                if (acc === "earphones") clue = "you put these in your ears to listen to music quietly";
+                if (acc === "digital camera") clue = "you use this to take very good photos";
+                if (acc === "printer") clue = "you use this to put your digital homework on paper";
+                if (acc === "speaker") clue = "you use this to listen to music loudly";
+                
+                return {
+                    question: `What device is this?\n${clue}.`,
+                    correct: acc,
+                    options: [acc, getRandom(devices), getRandom(internetTerms)]
+                };
+            } else {
+                return {
+                    question: `To find information on the internet, you have to go ________.`,
+                    correct: "online",
+                    options: ["online", "upload", "password"]
+                };
+            }
+        }
+
+        function checkAnswer(selected, btn) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            const feedback = document.getElementById('feedback-text');
+            if (selected === currentCorrectAnswer) {
+                btn.style.backgroundColor = "#10b981"; // Green
+                btn.style.borderColor = "#059669";
+                feedback.innerText = "ACCESS GRANTED! 🟢 Correct!";
+                feedback.style.color = "#10b981";
+                score += 10;
+            } else {
+                btn.style.backgroundColor = "#ef4444"; // Red
+                btn.style.borderColor = "#b91c1c";
+                feedback.innerText = `ERROR 🔴 The correct answer is: ${currentCorrectAnswer}`;
+                feedback.style.color = "#ef4444";
+            }
+            
+            document.getElementById('score').innerText = score;
+            document.getElementById('next-btn').style.display = "inline-block";
+        }
+
+        // Initialize first question
+        window.onload = generateQuestion;
+    </script>
+</body>
+</html>
